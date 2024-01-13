@@ -3,6 +3,10 @@ import flatpickr from "flatpickr";
 // Додатковий імпорт стилів
 import "flatpickr/dist/flatpickr.min.css";
 
+// Описаний у документації
+import iziToast from "izitoast";
+// Додатковий імпорт стилів
+import "izitoast/dist/css/iziToast.min.css";
 
 const options = {
     enableTime: true,
@@ -15,7 +19,8 @@ const options = {
   
       if (userSelectedDate < currentDate) {
         document.querySelector('button[data-start]').disabled = true;
-        iziToast.error({ title: 'Error', message: 'Please choose a date in the future' });
+        iziToast.error({ title: 'Error', message: 'Please choose a date in the future', position: 'topRight',
+    });
       } else {
         document.querySelector('button[data-start]').disabled = false;
       }
