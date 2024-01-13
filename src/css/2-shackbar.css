@@ -1,0 +1,48 @@
+/* 2-snackbar.css */
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .form {
+    max-width: 300px;
+    margin: 20px auto;
+    position: absolute;
+    top: 0;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  
+  fieldset {
+    margin-bottom: 20px;
+  }
+  
+  button {
+    /* display: block;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer; */
+    width: 100%;
+  }
+  
+  fieldset {
+    margin-bottom: 20px;
+    display: flex; /* Додано для встановлення горизонтального вирівнювання */
+  }
+  
+  fieldset label {
+    margin-right: 20px; /* Додано для створення відступів між радіо-кнопками */
+  }
+  
+  
