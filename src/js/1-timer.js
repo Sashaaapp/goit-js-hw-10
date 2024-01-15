@@ -15,7 +15,7 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onOpen(selectedDates, dateStr, instance) {
-    instance.clear(); 
+    instance.clear(); // Очищаємо вибрану дату при відкритті календаря
   },
   onClose(selectedDates) {
     const userSelectedDate = selectedDates[0];
@@ -30,7 +30,6 @@ const options = {
     } else {
       iziToast.hide();
       document.querySelector('[data-start]').disabled = false;
-      updateTimer(); 
     }
   },
 };
@@ -47,21 +46,21 @@ function updateTimer() {
   const timeDiff = userSelectedDate - now;
 
   if (timeDiff <= 0) {
+    clearInterval(timerInterval);
     iziToast.success({
       title: 'Success',
       message: 'Timer reached zero!',
     });
-    document.querySelector('[data-start]').disabled = false;
     return;
   }
 
   const { days, hours, minutes, seconds } = convertMs(timeDiff);
   document.querySelector('[data-days]').textContent = addLeadingZero(days);
   document.querySelector('[data-hours]').textContent = addLeadingZero(hours);
-  document.querySelector('[data-minutes]').textContent = addLeadingZero(minutes);
-  document.querySelector('[data-seconds]').textContent = addLeadingZero(seconds);
-
-  requestAnimationFrame(updateTimer); 
+  document.querySelector('[data-minutes]').textContent =
+    addLeadingZero(minutes);
+  document.querySelector('[data-seconds]').textContent =
+    addLeadingZero(seconds);
 }
 
 function convertMs(ms) {
@@ -78,9 +77,9 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
+let timerInterval;
+
 document.querySelector('[data-start]').addEventListener('click', function () {
-  document.querySelector('[data-start]').disabled = true;
-  updateTimer(); 
+  timerInterval = setInterval(updateTimer, 1000);
+  this.disabled = true;
 });
-
-
