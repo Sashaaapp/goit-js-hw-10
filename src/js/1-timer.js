@@ -15,7 +15,7 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onOpen(selectedDates, dateStr, instance) {
-    instance.clear(); // Очищаємо вибрану дату при відкритті календаря
+    instance.clear(); 
   },
   onClose(selectedDates) {
     const userSelectedDate = selectedDates[0];
