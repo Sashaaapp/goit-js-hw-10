@@ -59,19 +59,36 @@ const options = {
     return value.toString().padStart(2, '0');
   }
   
+  // function convertMs(ms) {
+  //   const second = 1000;
+  //   const minute = second * 60;
+  //   const hour = minute * 60;
+  //   const day = hour * 24;
+  
+  //   const days = Math.floor(ms / day);
+  //   const hours = Math.floor((ms % day) / hour);
+  //   const minutes = Math.floor((ms % hour) / minute);
+  //   const seconds = Math.floor(((ms % day) % hour % minute) / second);
+  
+  //   return { days, hours, minutes, seconds };
+  // }
+
+
   function convertMs(ms) {
     const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
+    const minute = 60 * second;
+    const hour = 60 * minute;
+    const day = 24 * hour;
   
     const days = Math.floor(ms / day);
     const hours = Math.floor((ms % day) / hour);
-    const minutes = Math.floor(((ms % day) % hour) / minute);
-    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+    const minutes = Math.floor((ms % hour) / minute);
+    const seconds = Math.floor(((ms % day) % hour % minute) / second);
   
     return { days, hours, minutes, seconds };
   }
+  
+  
   
   document.querySelector('button[data-start]').addEventListener('click', () => {
     const userSelectedDate = flatpickr('#datetime-picker').selectedDates[0];
