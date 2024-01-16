@@ -9,14 +9,16 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
 
+
+const startButton = document.querySelector('[data-start]');
+let timerActive = false;
+let autoStartTimer = false;
+const input = document.querySelector('#datetime-picker');
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-  onOpen(selectedDates, dateStr, instance) {
-    instance.clear(); 
-  },
   onClose(selectedDates) {
     const userSelectedDate = selectedDates[0];
     const now = new Date();
@@ -26,15 +28,18 @@ const options = {
         title: 'Error',
         message: 'Please choose a date in the future',
       });
-      document.querySelector('[data-start]').disabled = true;
+      startButton.disabled = true;
     } else {
-      iziToast.hide();
-      document.querySelector('[data-start]').disabled = false;
+      startButton.disabled = false;
     }
+  },
+  onOpen(selectedDates, dateStr, instance) {
+    // Додаємо слухача для очищення таймера при відкритті меню вибору
+    clearTimerData();
   },
 };
 
-const datePicker = flatpickr('#datetime-picker', options);
+const datePicker = flatpickr(input, options);
 
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
@@ -51,6 +56,10 @@ function updateTimer() {
       title: 'Success',
       message: 'Timer reached zero!',
     });
+    startButton.disabled = false;
+    input.disabled = false;
+    timerActive = false;
+    autoStartTimer = false;
     return;
   }
 
@@ -79,7 +88,47 @@ function convertMs(ms) {
 
 let timerInterval;
 
-document.querySelector('[data-start]').addEventListener('click', function () {
-  timerInterval = setInterval(updateTimer, 1000);
-  this.disabled = true;
+startButton.addEventListener('click', function () {
+  const userSelectedDate = datePicker.selectedDates[0];
+
+  if (userSelectedDate && !timerActive) {
+    timerInterval = setInterval(updateTimer, 1000);
+    this.disabled = true;
+    timerActive = true;
+  } else if (!userSelectedDate) {
+    iziToast.error({
+      title: 'Error',
+      message: 'Please choose a valid future date before starting the timer.',
+    });
+  } else {
+    console.log('Timer is already active.');
+  }
 });
+
+input.addEventListener('change', function () {
+  autoStartTimer = true;
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  if (autoStartTimer) {
+    const userSelectedDate = datePicker.selectedDates[0];
+    if (userSelectedDate && !timerActive) {
+      timerInterval = setInterval(updateTimer, 1000);
+      startButton.disabled = true;
+      timerActive = true;
+    }
+  }
+});
+
+// Функція для очищення даних таймера
+function clearTimerData() {
+  document.querySelector('[data-days]').textContent = '00';
+  document.querySelector('[data-hours]').textContent = '00';
+  document.querySelector('[data-minutes]').textContent = '00';
+  document.querySelector('[data-seconds]').textContent = '00';
+  clearInterval(timerInterval);
+  startButton.disabled = false;
+  input.disabled = false;
+  timerActive = false;
+  autoStartTimer = false;
+}
