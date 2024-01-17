@@ -8,8 +8,6 @@ import iziToast from "izitoast";
 // Додатковий імпорт стилів
 import "izitoast/dist/css/iziToast.min.css";
 
-
-
 const startButton = document.querySelector('[data-start]');
 let timerActive = false;
 let autoStartTimer = false;
@@ -23,10 +21,10 @@ const options = {
     const userSelectedDate = selectedDates[0];
     const now = new Date();
 
-    if (userSelectedDate <= now) {
+    if (userSelectedDate <= now || isNaN(userSelectedDate)) {
       iziToast.error({
         title: 'Error',
-        message: 'Please choose a date in the future',
+        message: 'Please choose a valid date and time in the future',
       });
       startButton.disabled = true;
     } else {
@@ -34,7 +32,6 @@ const options = {
     }
   },
   onOpen(selectedDates, dateStr, instance) {
-    // Додаємо слухача для очищення таймера при відкритті меню вибору
     clearTimerData();
   },
 };
@@ -56,7 +53,7 @@ function updateTimer() {
       title: 'Success',
       message: 'Timer reached zero!',
     });
-    startButton.disabled = false;
+    startButton.disabled = true;
     input.disabled = false;
     timerActive = false;
     autoStartTimer = false;
@@ -88,6 +85,15 @@ function convertMs(ms) {
 
 let timerInterval;
 
+function updateStartButtonState() {
+  const userSelectedDate = datePicker.selectedDates[0];
+  if (userSelectedDate) {
+    startButton.disabled = false;
+  } else {
+    startButton.disabled = true;
+  }
+}
+
 startButton.addEventListener('click', function () {
   const userSelectedDate = datePicker.selectedDates[0];
 
@@ -107,11 +113,20 @@ startButton.addEventListener('click', function () {
 
 input.addEventListener('change', function () {
   autoStartTimer = true;
+  updateStartButtonState();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+  updateStartButtonState();
+
+  const userSelectedDate = datePicker.selectedDates[0];
+  if (userSelectedDate && !timerActive) {
+    startButton.disabled = false;
+  } else {
+    startButton.disabled = true;
+  }
+
   if (autoStartTimer) {
-    const userSelectedDate = datePicker.selectedDates[0];
     if (userSelectedDate && !timerActive) {
       timerInterval = setInterval(updateTimer, 1000);
       startButton.disabled = true;
@@ -120,14 +135,13 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// Функція для очищення даних таймера
 function clearTimerData() {
   document.querySelector('[data-days]').textContent = '00';
   document.querySelector('[data-hours]').textContent = '00';
   document.querySelector('[data-minutes]').textContent = '00';
   document.querySelector('[data-seconds]').textContent = '00';
   clearInterval(timerInterval);
-  startButton.disabled = false;
+  startButton.disabled = true;
   input.disabled = false;
   timerActive = false;
   autoStartTimer = false;
